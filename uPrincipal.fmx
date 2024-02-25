@@ -1,0 +1,192 @@
+object FrmPrincipal: TFrmPrincipal
+  Left = 0
+  Top = 0
+  Caption = 'Negocius Sync'
+  ClientHeight = 261
+  ClientWidth = 716
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  OnClose = FormClose
+  DesignerMasterStyle = 0
+  object Button1: TButton
+    Anchors = [akTop, akRight]
+    Position.X = 291.000000000000000000
+    Position.Y = 95.000000000000000000
+    Size.Width = 121.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 10
+    Text = 'LIstar Forma PGTO'
+    OnClick = Button1Click
+  end
+  object Label1: TLabel
+    Align = Top
+    StyledSettings = [Family]
+    Margins.Right = 50.000000000000000000
+    Size.Width = 666.000000000000000000
+    Size.Height = 31.000000000000000000
+    Size.PlatformDefault = False
+    TextSettings.Font.Size = 16.000000000000000000
+    TextSettings.Font.StyleExt = {00070000000000000004000000}
+    TextSettings.FontColor = xFF222121
+    TextSettings.HorzAlign = Center
+    Text = 'Negocius Sync'
+    TabOrder = 0
+  end
+  object Button2: TButton
+    Position.X = 8.000000000000000000
+    Position.Y = 65.000000000000000000
+    Size.Width = 121.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 12
+    Text = 'Listar Prazo'
+    OnClick = Button2Click
+  end
+  object Button3: TButton
+    Position.X = 296.000000000000000000
+    Position.Y = 65.000000000000000000
+    Size.Width = 121.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 11
+    Text = 'Listar Cliente x Forma Pagamento'
+    OnClick = Button3Click
+  end
+  object Button4: TButton
+    Position.X = 296.000000000000000000
+    Position.Y = 95.000000000000000000
+    Size.Width = 121.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 9
+    Text = 'Listar Clientes'
+    OnClick = Button4Click
+  end
+  object Button5: TButton
+    Position.X = 152.000000000000000000
+    Position.Y = 65.000000000000000000
+    Size.Width = 121.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 7
+    Text = 'Listar Representantes'
+    OnClick = Button5Click
+  end
+  object Button6: TButton
+    Position.X = 152.000000000000000000
+    Position.Y = 95.000000000000000000
+    Size.Width = 121.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 6
+    Text = 'Listar Rep x Cliente'
+    OnClick = Button6Click
+  end
+  object Button7: TButton
+    Position.X = 152.000000000000000000
+    Position.Y = 125.000000000000000000
+    Size.Width = 121.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 5
+    Text = 'Listar Produtos'
+    OnClick = Button7Click
+  end
+  object Button8: TButton
+    Position.X = 8.000000000000000000
+    Position.Y = 125.000000000000000000
+    Size.Width = 121.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    Text = 'Listar Pagto_x_Pedido'
+    OnClick = Button8Click
+  end
+  object Label2: TLabel
+    Position.X = 312.000000000000000000
+    Position.Y = 176.000000000000000000
+    Text = 'Client_ID'
+    TabOrder = 16
+  end
+  object edt_cliente_ID: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 19
+    Text = 'Client_Id_07A581BF885D490F9CE395040B89E4CA'
+    Position.X = 440.000000000000000000
+    Position.Y = 171.000000000000000000
+    Size.Width = 257.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object Edit2: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 18
+    Position.X = 88.000000000000000000
+    Position.Y = 208.000000000000000000
+    Size.Width = 121.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object Button9: TButton
+    Position.X = 112.000000000000000000
+    Position.Y = 231.000000000000000000
+    TabOrder = 20
+    Text = 'Iniciar'
+    OnClick = Button9Click
+  end
+  object Label3: TLabel
+    Position.X = 8.000000000000000000
+    Position.Y = 213.000000000000000000
+    Text = 'Porta'
+    TabOrder = 14
+  end
+  object Button10: TButton
+    Position.X = 152.000000000000000000
+    Position.Y = 155.000000000000000000
+    Size.Width = 121.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 4
+    Text = 'Listar Estoque'
+    OnClick = Button10Click
+  end
+  object Button11: TButton
+    Position.X = 296.000000000000000000
+    Position.Y = 125.000000000000000000
+    Size.Width = 121.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 8
+    Text = 'Listar Tipo Pedido'
+    OnClick = Button11Click
+  end
+  object Button12: TButton
+    Position.X = 448.000000000000000000
+    Position.Y = 65.000000000000000000
+    Size.Width = 137.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 3
+    Text = 'Importar Pedidos da API'
+    OnClick = Button12Click
+  end
+  object Label4: TLabel
+    Position.X = 312.000000000000000000
+    Position.Y = 206.000000000000000000
+    Text = 'Secret_id'
+    TabOrder = 15
+  end
+  object edt_secret_id: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 17
+    Text = 'Client_Secret_4BB3AC29F40045B0A07533E12B705977'
+    Position.X = 440.000000000000000000
+    Position.Y = 201.000000000000000000
+    Size.Width = 257.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+end
