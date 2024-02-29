@@ -192,8 +192,8 @@ end;
 //levanta o servidor
 procedure TFrmPrincipal.FormCreate(Sender: TObject);
 begin
-//      ClienteID := edt_cliente_ID.Text;
-//      SecretID  := edt_secret_id.Text;
+      ClienteID := edt_cliente_ID.Text;
+      SecretID  := edt_secret_id.Text;
 
       InstanciaClassesSync;
 

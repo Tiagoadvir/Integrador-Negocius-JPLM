@@ -52,11 +52,9 @@ begin
 
     obj.AddPair('tipo', tipo);
 
-
-    lResp := TRequest.New.BaseURL(URL)
+    lResp := TRequest.New.BaseURL(URL_AWS)
              .Resource('/v1/pedido/tipo')
              .TokenBearer(TGetToken.SolicitaToken)
-             .AddBody('grant_type', 'client_credentials')
              .AddBody(obj)
              .Post;
   finally
@@ -75,9 +73,9 @@ var
  I, J: Integer;
 begin
 
-          resp := TRequest.New.BaseURL(URL)
-                   .Resource('/v1/pedido/importar')  //resource é a  rota a ser consumida.
+          resp := TRequest.New.BaseURL(URL_AWS)
                    .TokenBearer(TGetToken.SolicitaToken)
+                   .Resource('/v1/pedido/importar')  //resource é a  rota a ser consumida.
                    .AddParam('dt_ultima_sincronizacao', dt_ult_sinc)
                    .AddParam('pagina', pagina.ToString)
                    .AddParam('ind_sinc', ind_sincronizar)

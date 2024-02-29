@@ -8,7 +8,9 @@ uses
   System.Classes,
   System.JSON,
   System.SysUtils;
-const URL = 'http://localhost:9000';
+const URL = 'http://localhost:9001';
+const URL_AWS = 'http://3.135.235.30:3001';
+const URL_TIPO_PEDIDO = 'http://localhost:9002';
 var ClienteID : string;
 var SecretID  : string;
 
@@ -27,7 +29,8 @@ class function TGetToken.SolicitaToken : string;
 var
  lResp : Iresponse;
 begin
-    lResp := TRequest.New.BaseURL('http://localhost:9010/token')
+    lResp := TRequest.New.BaseURL(URL_AWS)
+             .Resource('/token')
              .ContentType('application/json')
              .AddBody(TJSONObject.Create
                .AddPair('grant_type', 'client_credentials'))

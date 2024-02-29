@@ -154,8 +154,8 @@ object FrmPrincipal: TFrmPrincipal
     OnClick = Button10Click
   end
   object Button11: TButton
-    Position.X = 296.000000000000000000
-    Position.Y = 125.000000000000000000
+    Position.X = 448.000000000000000000
+    Position.Y = 95.000000000000000000
     Size.Width = 121.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
