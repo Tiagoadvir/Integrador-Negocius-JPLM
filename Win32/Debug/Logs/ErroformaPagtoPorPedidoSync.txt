@@ -1,0 +1,1 @@
+04/03/2024 14:45:25 - Erro ao enviar Cliente_x_forma_pagamentoToken not found

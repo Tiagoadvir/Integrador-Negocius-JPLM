@@ -51,21 +51,55 @@ var
  cod_usuario, pagina : Integer;
  Forma : TJSONArray;
  obj : TJSONObject;
-
+ loop : boolean;
 begin
-   try
+    pagina := 0;
+    loop := true;
+
     DmCondicaoPagamento := TDmCondPagto.Create(nil);
 
-    obj   := TJSONObject.Create;
-    Forma := TJSONArray.Create;
-    Forma := DmCondicaoPagamento.ListarFormaPagto;
+   try
+      while loop do
+      begin
+         inc(pagina);
+         try
 
-    obj.AddPair('forma', Forma);
+            obj   := TJSONObject.Create;
+            Forma := TJSONArray.Create;
+            Forma := DmCondicaoPagamento.ListarFormaPagto(pagina);
 
-    lResp := TRequest.New.BaseURL(URL)
-             .Resource('/v1/formapagto')
-             .AddBody(obj)
-             .Post;
+            if Forma.Size = 0 then
+            begin
+               log( 'Formas de pagamento syncronizados com sucesso ' + lResp.Content, 'ProdutoSync');
+               loop := False;
+               if assigned(Forma) then
+                Forma.Free;
+              exit;
+            end;
+
+            obj.AddPair('forma', Forma);
+
+            lResp := TRequest.New.BaseURL(URL_AWS)
+                     .Resource('/v1/formapagto/inserir')
+                     .TokenBearer(TGetToken.SolicitaToken)
+                     .AddBody(obj)
+                     .Post;
+
+            if lResp.StatusCode <> 200 then
+            begin
+             Log('Erro ao enviar prazos' + lresp.Content, 'PrazoSync');
+             loop := False;
+             end;
+
+         except on ex:exception do
+                 begin
+                  ShowMessage(lResp.Content);
+                  Log('Erro ao enviar Prazos' + lresp.Content, 'ErroPrazoSync');
+                  loop := False;
+                  end
+         end;
+      end;
+
    finally
      FreeAndNil(DmCondicaoPagamento);
    end;
@@ -97,7 +131,7 @@ begin
 
       if Prazo.Size = 0 then
       begin
-         log( 'Produtos syncronizados com sucesso ' + lResp.Content, 'ProdutoSync');
+         log( 'Prazos syncronizados com sucesso ' + lResp.Content, 'ProdutoSync');
          loop := False;
          if assigned(Prazo) then
           Prazo.Free;
@@ -106,7 +140,7 @@ begin
 
       obj.AddPair('prazo', Prazo);
 
-      lResp := TRequest.New.BaseURL(URL_PRAZO)
+      lResp := TRequest.New.BaseURL(URL_AWS)
                .Resource('/v1/prazo/inserir')
                .TokenBearer(TGetToken.SolicitaToken)
                .AddBody(obj)
@@ -139,22 +173,53 @@ var
  cod_usuario, pagina : Integer;
  cliente_x_forma_pagto : TJSONArray;
  obj : TJSONObject;
+ loop : boolean;
 begin
+    pagina := 0;
+    loop := true;
 
+   DmPrazo := TDmCondPagto.Create(nil);
   try
-    DmPrazo := TDmCondPagto.Create(nil);
+    while loop do
+    begin
+       inc(pagina);
+      try
+        obj   := TJSONObject.Create;
+        cliente_x_forma_pagto := TJSONArray.Create;
+        cliente_x_forma_pagto := DmPrazo.ListarClienteFormaPagto('01/01/1900', pagina);
 
-    obj   := TJSONObject.Create;
-    cliente_x_forma_pagto := TJSONArray.Create;
-    cliente_x_forma_pagto := DmPrazo.ListarClienteFormaPagto('01/01/1900', 1);
+        obj.AddPair('cliente_forma_pagto', cliente_x_forma_pagto);
 
-    obj.AddPair('cliente_forma_pagto', cliente_x_forma_pagto);
+       if cliente_x_forma_pagto.Size = 0 then
+        begin
+           log( 'Cliente_x_forma_pagamento syncronizados com sucesso ' + lResp.Content, 'formaPagtoPorPedidoSync');
+           loop := False;
+           if assigned(cliente_x_forma_pagto) then
+            cliente_x_forma_pagto.Free;
+          exit;
+        end;
 
 
-    lResp := TRequest.New.BaseURL(URL)
-             .Resource('/v1/cliente_x_forma')
-             .AddBody(obj)
-             .Post;
+        lResp := TRequest.New.BaseURL(URL_AWS)
+               .Resource('/v1/cliente_x_forma/inserir')
+               .TokenBearer(TGetToken.SolicitaToken)
+               .AddBody(obj)
+               .Post;
+
+        if lResp.StatusCode <> 200 then
+        begin
+         Log('Erro ao enviar Cliente_x_forma_pagamento ' + lresp.Content, 'ErroformaPagtoPorPedidoSync');
+         loop := False;
+         end;
+
+      except on ex:exception do
+             begin
+                ShowMessage(lResp.Content);
+                Log('Erro ao enviar Cliente_x_forma_pagamento ' + lresp.Content, 'ErroformaPagtoPorPedidoSync');
+                loop := False;
+             end
+       end;
+    end;
   finally
      FreeAndNil(DmPrazo);
    end;
@@ -167,21 +232,52 @@ var
  cod_usuario, pagina : Integer;
  forma_pagto_x_pedido : TJSONArray;
  obj : TJSONObject;
+ loop : boolean;
 begin
+    pagina := 0;
+    loop := true;
 
+   DmPrazo := TDmCondPagto.Create(nil);
   try
-    DmPrazo := TDmCondPagto.Create(nil);
+    while loop do
+    begin
+       inc(pagina);
+      try
+        obj   := TJSONObject.Create;
+        forma_pagto_x_pedido := TJSONArray.Create;
+        forma_pagto_x_pedido := DmPrazo.Listar_prazo_x_pedido('01/01/1900', pagina);
 
-    obj   := TJSONObject.Create;
-    forma_pagto_x_pedido := TJSONArray.Create;
-    forma_pagto_x_pedido := DmPrazo.Listar_prazo_x_pedido('01/01/1900');
+        if forma_pagto_x_pedido.Size = 0 then
+        begin
+           log( 'forma_pagamento_x_pedidos syncronizados com sucesso ' + lResp.Content, 'formaPagtoPorPedidoSync');
+           loop := False;
+           if assigned(forma_pagto_x_pedido) then
+            forma_pagto_x_pedido.Free;
+          exit;
+        end;
 
-    obj.AddPair('prazo_x_pedido', forma_pagto_x_pedido);
+        obj.AddPair('prazo_x_pedido', forma_pagto_x_pedido);
 
-    lResp := TRequest.New.BaseURL(URL)
-             .Resource('/v1/prazo/prazo_x_pedido')
-             .AddBody(obj)
-             .Post;
+        lResp := TRequest.New.BaseURL(URL_AWS)
+                 .Resource('/v1/prazo/prazo_x_pedido/inserir')
+                 .TokenBearer(TGetToken.SolicitaToken)
+                 .AddBody(obj)
+                 .Post;
+
+        if lResp.StatusCode <> 200 then
+        begin
+         Log('Erro ao enviar forma_pagamento_x_pedidos' + lresp.Content, 'ErroformaPagtoPorPedidoSync');
+         loop := False;
+         end;
+
+      except on ex:exception do
+               begin
+                ShowMessage(lResp.Content);
+                Log('Erro ao enviar forma_pagamento_x_pedido' + lresp.Content, 'ErroformaPagtoPorPedidoSync');
+                loop := False;
+                end
+       end;
+    end;
   finally
      FreeAndNil(DmPrazo);
    end;

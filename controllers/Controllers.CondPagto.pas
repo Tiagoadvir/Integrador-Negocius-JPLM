@@ -178,7 +178,7 @@ begin
            // Res.Send<TJSONArray>(DmGlobal.ListarCondPagto).Status(200);
 
            //Negocius
-            Res.Send<TJSONArray>(DmCondPagto.ListarFormaPagto).Status(200);
+            Res.Send<TJSONArray>(DmCondPagto.ListarFormaPagto(pagina)).Status(200);
 
 
         except on ex:exception do

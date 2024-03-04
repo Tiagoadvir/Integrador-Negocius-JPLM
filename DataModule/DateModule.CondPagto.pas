@@ -49,10 +49,10 @@ interface
     procedure ConfiguraParametrosDatasetSerialize;
     function ListarCondPagto: TJSONArray;
     function ListarPrazo(pagina : integer) : TJSONArray;
-    function ListarFormaPagto: TJSONArray;
+    function ListarFormaPagto(pagina : integer): TJSONArray;
     function ListarClienteFormaPagto(dt_ultima_sincronizacao : String;
                                               cod_usuario: Integer) : TJSONArray;
-    function Listar_prazo_x_pedido(dt_ultima_alteracao: string): TJSONArray;
+    function Listar_prazo_x_pedido(dt_ultima_alteracao: string; pagina : Integer): TJSONArray;
     public
   end;
 
@@ -180,7 +180,7 @@ begin
 end;
 
 //Lista As formas de pagamento   OK (06/02/2024)
-function TDmCondPagto.ListarFormaPagto : TJSONArray;
+function TDmCondPagto.ListarFormaPagto(pagina : integer): TJSONArray;
  var
  qryforma : TFDQuery; // se fosse utilizar sem compnente em tempo de execução
   DmGlobal : TDmGlobal;
@@ -196,9 +196,14 @@ begin
      }
          qryforma.Active := False;
          qryforma.sql.Clear;
+         qryforma.SQL.Add(' SELECT FIRST :FIRST SKIP :SKIP * FROM ( ');
          qryforma.SQL.Add('SELECT ISN_FORMA_PAGAMENTO ID_FORMA, FPADS_FORMA DESCRICAO_FORMA');
          qryforma.SQL.Add('FROM T_FORMA_PAGAMENTO ');
-         qryforma.SQL.Add('WHERE FPAFG_EXP_PALM = ''S'' ');
+         qryforma.SQL.Add('WHERE FPAFG_EXP_PALM = ''S'')');
+
+         qryforma.ParamByName('FIRST').AsInteger := QTD_DE_REG_PAGINA_CLIENTE; //Quantos registro quero trazer
+         qryforma.ParamByName('SKIP').AsInteger := (pagina * QTD_DE_REG_PAGINA_CLIENTE) - QTD_DE_REG_PAGINA_CLIENTE;
+
          qryforma. Active := True;
 
 
@@ -301,7 +306,7 @@ begin
     {$ENDREGION}
 end;
 
-function TDmCondPagto.Listar_prazo_x_pedido(dt_ultima_alteracao: string): TJSONArray;
+function TDmCondPagto.Listar_prazo_x_pedido(dt_ultima_alteracao: string; pagina : Integer): TJSONArray;
  var
   qryforma : TFDQuery; // se fosse utilizar sem compnente em tempo de execução
   DmGlobal : TDmGlobal;
@@ -314,7 +319,7 @@ begin
   try
      qryforma.Active := false;
      qryforma.SQL.Clear;
-//     qryforma.SQL.Add('SELECT  FIRST :FIRST SKIP :SKIP * FROM (');
+     qryforma.SQL.Add('SELECT  FIRST :FIRST SKIP :SKIP * FROM (');
      qryforma.SQL.Add('SELECT');
      qryforma.SQL.Add('TPP.ISN_TIPO_PEDIDO_PRAZO COD_PRAZO_X_PEDIDO,');
      qryforma.SQL.Add('TPP.ISN_TIPO_PEDIDO COD_TIPO_PEDIDO,');
@@ -325,10 +330,11 @@ begin
      qryforma.SQL.Add('WHERE TP.TIPFG_EXPORTA_PALM = ''S''');
      qryforma.SQL.Add('AND TPZ.PRAFG_EXP_PALM = ''S''');
      qryforma.SQL.Add('AND TPZ.PRAFG_INATIVO = ''N'' ');
-     qryforma.SQL.Add('AND TPP.DATA_ULTIMA_ALTERACAO > :DATA_ULTIMA_ALTERACAO');
+     qryforma.SQL.Add('AND TPP.DATA_ULTIMA_ALTERACAO > :DATA_ULTIMA_ALTERACAO)');
 
      qryforma.ParamByName('DATA_ULTIMA_ALTERACAO').Value := dt_ultima_alteracao;
-
+     qryforma.ParamByName('FIRST').AsInteger := QTD_DE_REG_PAGINA_CLIENTE; //Quantos registro quero trazer
+     qryforma.ParamByName('SKIP').AsInteger := (pagina * QTD_DE_REG_PAGINA_CLIENTE) - QTD_DE_REG_PAGINA_CLIENTE;
      qryforma.Active := True;
 
 

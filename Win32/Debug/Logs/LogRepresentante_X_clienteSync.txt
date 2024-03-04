@@ -1,4 +1,0 @@
-04/03/2024 08:43:10 - RepresentanteX_Cliente syncronizados com sucesso Dados Gravados com sucesso
-04/03/2024 08:48:32 - RepresentanteX_Cliente syncronizados com sucesso Erro ao Salvar Relacionamento CLiente x RepresentanteDynamic SQL ErrorSQL error code = -104Token unknown - line 3, column 1WHERE
-04/03/2024 09:09:22 - RepresentanteX_Cliente syncronizados com sucesso Dados Gravados com sucesso
-04/03/2024 09:16:13 - RepresentanteX_Cliente syncronizados com sucesso Dados Gravados com sucesso
