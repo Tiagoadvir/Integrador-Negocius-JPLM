@@ -306,6 +306,7 @@
         <DCCReference Include="DataModule\DataModule.Representante.pas"/>
         <DCCReference Include="Produtos\uProdutoSync.pas"/>
         <DCCReference Include="Pedido\uPedidoSync.pas"/>
+        <DCCReference Include="Units\LogUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -6,6 +6,7 @@ uses
     FMX.Dialogs,
     RESTRequest4D,
     uConstante,
+    LogUnit,
 
     Controllers.Auth,
     System.IOUtils,
@@ -41,22 +42,57 @@ var
  cod_usuario, pagina : Integer;
  clientes : TJSONArray;
  obj : TJSONObject;
+ loop : Boolean;
+ i : Integer;
 begin
-  lDmCliente := TDmCliente.Create;
 
-    obj   := TJSONObject.Create;
-    clientes := TJSONArray.Create;
-    clientes := lDmCliente.ListarClientes('01/01/1800 00:00:00', 0);
 
-    obj.AddPair('clientes', clientes);
+    lDmCliente := TDmCliente.Create;
 
-    lResp := TRequest.New.BaseURL(URL)
-             .Resource('/v1/clientes/inserir')
-             .ContentType('application/json')
-             .AddBody(obj)
-             .Post;
+      pagina := 0;
+      loop := True;
+     while loop do
+     begin
+        try
+             Inc(pagina);
 
-    ShowMessage(lresp.Content);
+              obj   := TJSONObject.Create;
+              clientes := TJSONArray.Create;
+              clientes := lDmCliente.ListarClientes('01/01/1800 00:00:00', pagina);
+
+              if clientes.Count = 0 then
+              begin
+              log( 'Clientes syncronizados com sucesso ' + lResp.Content, 'LogClienteSync');
+              loop := False;
+               if assigned(obj) then
+                  obj.Free;
+              exit;
+              end;
+
+              obj.AddPair('clientes', clientes);
+
+              lResp := TRequest.New.BaseURL(URL_AWS)
+                       .Resource('/v1/cliente/inserir')
+                       .TokenBearer(TGetToken.SolicitaToken)
+                       .ContentType('application/json')
+                       .AddBody(obj)
+                       .Post;
+
+          if lresp.StatusCode <> 200 then
+          begin
+             ShowMessage(lresp.Content);
+             Log('Erro ao gravar clientes' + lresp.Content, 'LogClietneSync' );
+             loop := false;
+          end;
+
+       except on ex:exception do
+         begin
+          log( ' Erro ao sincronizar Clientes ' + lResp.Content, 'LogClietneSync');
+          loop := False;
+          exit;
+         end;
+         end;
+     end;
 end;
 
 end.

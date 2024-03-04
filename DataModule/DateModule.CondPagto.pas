@@ -48,7 +48,7 @@ interface
   public
     procedure ConfiguraParametrosDatasetSerialize;
     function ListarCondPagto: TJSONArray;
-    function ListarPrazo: TJSONArray;
+    function ListarPrazo(pagina : integer) : TJSONArray;
     function ListarFormaPagto: TJSONArray;
     function ListarClienteFormaPagto(dt_ultima_sincronizacao : String;
                                               cod_usuario: Integer) : TJSONArray;
@@ -128,12 +128,13 @@ end;
 
 //-----  DISPARA DADOS PARA API-----------
 //Lista As condições os prazos   OK (06/02/2024)
-function TDmCondPagto.ListarPrazo : TJSONArray;
+function TDmCondPagto.ListarPrazo(pagina : integer) : TJSONArray;
  var
   qry : TFDQuery; // se fosse utilizar sem compnente em tempo de execução
   DmGlobal : TDmGlobal;
 begin
      ConfiguraParametrosDatasetSerialize;
+
     try
      DmGlobal := TDmGlobal.Create(nil);
      qry := TFDQuery.Create(nil);
@@ -144,9 +145,9 @@ begin
           {
           Fazo select na tabela, e lista as condições de pagamento
           }
-           Active := False;
-            sql.Clear;
-          SQL.Add('SELECT');
+          Active := False;
+          sql.Clear;
+          SQL.Add('SELECT  FIRST :FIRST SKIP :SKIP * FROM ( SELECT ');
           SQL.Add('ISN_PRAZO AS COD_PRAZO,');
           SQL.Add('PRADS_PRAZO AS DESCRICAO_PRAZO,');
           SQL.Add('PRAVL_PEDIDO_MINIMO AS VALOR_PED_MINIMO,');
@@ -159,7 +160,12 @@ begin
           SQL.Add('WHERE');
           SQL.Add('PRAFG_EXP_PALM = ''S''');
           SQL.Add('ORDER BY');
-          SQL.Add('ISN_PRAZO');
+          SQL.Add('ISN_PRAZO)');
+
+                     //TRATAR A PAGINAÇÃO
+          ParamByName('FIRST').Value := QTD_DE_REG_PAGINA_PRODUTO; //Quantos registro quero trazer
+          ParamByName('SKIP').Value := (pagina * QTD_DE_REG_PAGINA_PRODUTO) - QTD_DE_REG_PAGINA_PRODUTO;
+
           Active := True;
         end;
 

@@ -3,7 +3,7 @@ object FrmPrincipal: TFrmPrincipal
   Top = 0
   Caption = 'Negocius Sync'
   ClientHeight = 261
-  ClientWidth = 716
+  ClientWidth = 761
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
@@ -12,7 +12,7 @@ object FrmPrincipal: TFrmPrincipal
   DesignerMasterStyle = 0
   object Button1: TButton
     Anchors = [akTop, akRight]
-    Position.X = 291.000000000000000000
+    Position.X = 8.000000000000000000
     Position.Y = 95.000000000000000000
     Size.Width = 121.000000000000000000
     Size.Height = 22.000000000000000000
@@ -25,7 +25,7 @@ object FrmPrincipal: TFrmPrincipal
     Align = Top
     StyledSettings = [Family]
     Margins.Right = 50.000000000000000000
-    Size.Width = 666.000000000000000000
+    Size.Width = 711.000000000000000000
     Size.Height = 31.000000000000000000
     Size.PlatformDefault = False
     TextSettings.Font.Size = 16.000000000000000000
@@ -42,13 +42,13 @@ object FrmPrincipal: TFrmPrincipal
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 12
-    Text = 'Listar Prazo'
+    Text = 'Enviar Prazo - ok'
     OnClick = Button2Click
   end
   object Button3: TButton
-    Position.X = 296.000000000000000000
-    Position.Y = 65.000000000000000000
-    Size.Width = 121.000000000000000000
+    Position.X = 8.000000000000000000
+    Position.Y = 155.000000000000000000
+    Size.Width = 186.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 11
@@ -56,43 +56,43 @@ object FrmPrincipal: TFrmPrincipal
     OnClick = Button3Click
   end
   object Button4: TButton
-    Position.X = 296.000000000000000000
-    Position.Y = 95.000000000000000000
-    Size.Width = 121.000000000000000000
-    Size.Height = 22.000000000000000000
-    Size.PlatformDefault = False
-    TabOrder = 9
-    Text = 'Listar Clientes'
-    OnClick = Button4Click
-  end
-  object Button5: TButton
-    Position.X = 152.000000000000000000
+    Position.X = 415.000000000000000000
     Position.Y = 65.000000000000000000
     Size.Width = 121.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
+    TabOrder = 9
+    Text = 'Enviar Clientes - ok'
+    OnClick = Button4Click
+  end
+  object Button5: TButton
+    Position.X = 225.000000000000000000
+    Position.Y = 65.000000000000000000
+    Size.Width = 159.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
     TabOrder = 7
-    Text = 'Listar Representantes'
+    Text = 'Enviar Representantes - ok'
     OnClick = Button5Click
   end
   object Button6: TButton
-    Position.X = 152.000000000000000000
+    Position.X = 225.000000000000000000
     Position.Y = 95.000000000000000000
-    Size.Width = 121.000000000000000000
+    Size.Width = 159.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 6
-    Text = 'Listar Rep x Cliente'
+    Text = 'Enviar Rep x Cliente - ok'
     OnClick = Button6Click
   end
   object Button7: TButton
-    Position.X = 152.000000000000000000
+    Position.X = 225.000000000000000000
     Position.Y = 125.000000000000000000
-    Size.Width = 121.000000000000000000
+    Size.Width = 159.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 5
-    Text = 'Listar Produtos'
+    Text = 'Enviar Produtos - ok'
     OnClick = Button7Click
   end
   object Button8: TButton
@@ -144,27 +144,27 @@ object FrmPrincipal: TFrmPrincipal
     TabOrder = 14
   end
   object Button10: TButton
-    Position.X = 152.000000000000000000
+    Position.X = 225.000000000000000000
     Position.Y = 155.000000000000000000
-    Size.Width = 121.000000000000000000
+    Size.Width = 159.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 4
-    Text = 'Listar Estoque'
+    Text = 'Enviar Estoque - ok'
     OnClick = Button10Click
   end
   object Button11: TButton
-    Position.X = 448.000000000000000000
+    Position.X = 560.000000000000000000
     Position.Y = 95.000000000000000000
-    Size.Width = 121.000000000000000000
+    Size.Width = 169.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 8
-    Text = 'Listar Tipo Pedido'
+    Text = 'Enviar Tipo Pedido - ok'
     OnClick = Button11Click
   end
   object Button12: TButton
-    Position.X = 448.000000000000000000
+    Position.X = 560.000000000000000000
     Position.Y = 65.000000000000000000
     Size.Width = 137.000000000000000000
     Size.Height = 22.000000000000000000

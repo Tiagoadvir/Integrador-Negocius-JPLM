@@ -3,17 +3,21 @@ unit uPrazosSync;
 interface
 
 uses
+  LogUnit,
   RESTRequest4D,
+  uConstante,
 
   Controllers.Auth,
-  System.IOUtils,
 
   DateModule.CondPagto,
   DateModule.Global,
 
+  FMX.Dialogs,
+
   Horse.Request,
   Horse.Response,
 
+  System.IOUtils,
   System.JSON,
 
   system.SysUtils;
@@ -30,9 +34,9 @@ TprazosSync = class
 end;
 
 implementation
-uses
- uPrincipal;
 
+uses
+  uPrincipal;
 Const
   URL = 'http://localhost:9000';
 
@@ -75,21 +79,53 @@ var
  cod_usuario, pagina : Integer;
  Prazo : TJSONArray;
  obj : TJSONObject;
+ loop : boolean;
 begin
+    pagina := 0;
+    loop := true;
 
   try
-    DmPrazo := TDmCondPagto.Create(nil);
+    while loop do
+    begin
+       inc(pagina);
+     try
+      DmPrazo := TDmCondPagto.Create(nil);
 
-    obj   := TJSONObject.Create;
-    Prazo := TJSONArray.Create;
-    Prazo := DmPrazo.ListarPrazo;
+      obj   := TJSONObject.Create;
+      Prazo := TJSONArray.Create;
+      Prazo := DmPrazo.ListarPrazo(pagina);
 
-    obj.AddPair('prazo', Prazo);
+      if Prazo.Size = 0 then
+      begin
+         log( 'Produtos syncronizados com sucesso ' + lResp.Content, 'ProdutoSync');
+         loop := False;
+         if assigned(Prazo) then
+          Prazo.Free;
+        exit;
+      end;
 
-    lResp := TRequest.New.BaseURL(URL)
-             .Resource('/v1/prazo')
-             .AddBody(obj)
-             .Post;
+      obj.AddPair('prazo', Prazo);
+
+      lResp := TRequest.New.BaseURL(URL_PRAZO)
+               .Resource('/v1/prazo/inserir')
+               .TokenBearer(TGetToken.SolicitaToken)
+               .AddBody(obj)
+               .Post;
+
+      if lResp.StatusCode <> 200 then
+      begin
+       Log('Erro ao enviar produtos' + lresp.Content, 'ErroPrazoSync');
+       loop := False;
+       end;
+
+    except on ex:exception do
+             begin
+              ShowMessage(lResp.Content);
+              Log('Erro ao enviar Prazos' + lresp.Content, 'ErroPrazoSync');
+              loop := False;
+              end
+     end;
+    end;
   finally
      FreeAndNil(DmPrazo);
    end;

@@ -82,7 +82,7 @@ begin
         lqryCliente.Active := False;
         lqryCliente.sql.Clear;
         lqryCliente.FetchOptions.Mode := fmAll;
-        lqryCliente.SQL.Add('SELECT');
+        lqryCliente.SQL.Add('SELECT FIRST :FIRST SKIP :SKIP * FROM (SELECT');
         lqryCliente.SQL.Add('ISN_CLIENTE COD_CLIENTE,');
         lqryCliente.SQL.Add('CLICN_CLIENTE COD_CLIENTE_LOCAL,');
         lqryCliente.SQL.Add('CLINM_CLIENTE NOME_CLIENTE,');
@@ -120,9 +120,17 @@ begin
         lqryCliente.SQL.Add('left outer join T_PRAZO PRA on (PRA.ISN_PRAZO = CLI.ISN_PRAZO)');
         lqryCliente.SQL.Add('WHERE CLI.CLIFG_NAO_EXPORTA_PALM = ''N''');
         lqryCliente.SQL.Add('AND CLI.DATA_ULTIMA_ALTERACAO  > :DATA_ULTIMA_ALTERACAO');
-        lqryCliente.SQL.Add('ORDER BY ISN_CLIENTE');
+        lqryCliente.SQL.Add('ORDER BY ISN_CLIENTE)');
 
         lqryCliente.ParamByName('DATA_ULTIMA_ALTERACAO').Value := dt_ultima_sincronizacao;
+
+          //TRATAR A PAGINAÇÃO
+        lqryCliente.ParamByName('FIRST').AsInteger := QTD_DE_REG_PAGINA_CLIENTE; //Quantos registro quero trazer
+        lqryCliente.ParamByName('SKIP').AsInteger := (pagina * QTD_DE_REG_PAGINA_CLIENTE) - QTD_DE_REG_PAGINA_CLIENTE;  //Quantos tenho que pular...
+        {
+         o calculo do salto de registro acima é a página atual x quantidade de registro que quero,
+         menos a quanditade de registro que já possui
+        }
         lqryCliente.Active := True;
 
         // Após, Monta um  array objeto json com o resultado da query

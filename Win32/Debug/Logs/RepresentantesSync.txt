@@ -1,0 +1,5 @@
+04/03/2024 00:34:40 - Representantes syncronizados com sucesso Erro ao Salvar Relacionamento CLiente x Representanteattempt to store duplicate value (visible to active transactions) in unique index "***unknown***"
+04/03/2024 08:42:06 - Representantes syncronizados com sucesso Erro ao Salvar Relacionamento CLiente x Representanteattempt to store duplicate value (visible to active transactions) in unique index "***unknown***"
+04/03/2024 08:43:48 - Representantes syncronizados com sucesso Erro ao Salvar Relacionamento CLiente x Representanteattempt to store duplicate value (visible to active transactions) in unique index "***unknown***"
+04/03/2024 08:43:50 - Representantes syncronizados com sucesso Erro ao Salvar Relacionamento CLiente x Representanteattempt to store duplicate value (visible to active transactions) in unique index "***unknown***"
+04/03/2024 09:15:29 - Representantes syncronizados com sucesso Dados Gravados com sucesso

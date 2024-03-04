@@ -1,0 +1,3 @@
+04/03/2024 10:39:34 - Erro ao enviar Prazos
+04/03/2024 10:39:43 - Erro ao enviar produtosNot Found
+04/03/2024 10:41:22 - Erro ao enviar produtosArquivo INI não encontrado: F:\PROJETOS PESSOAIS\FORÇA DE VENDAS DELPHI 11\FastPed_Servidor_Horse\MICRO_SERVICES\FORMAS DE PAGAMENTO\Win32\Debug\fastpedconfig.ini

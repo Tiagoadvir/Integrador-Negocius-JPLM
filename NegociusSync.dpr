@@ -24,7 +24,8 @@ uses
   uRepresntanteSync in 'Representante\uRepresntanteSync.pas',
   DataModule.Representante in 'DataModule\DataModule.Representante.pas',
   uProdutoSync in 'Produtos\uProdutoSync.pas',
-  uPedidoSync in 'Pedido\uPedidoSync.pas';
+  uPedidoSync in 'Pedido\uPedidoSync.pas',
+  LogUnit in 'Units\LogUnit.pas';
 
 {$R *.res}
 

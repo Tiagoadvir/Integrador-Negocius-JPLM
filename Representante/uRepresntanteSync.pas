@@ -1,9 +1,12 @@
 unit uRepresntanteSync;
 
 interface
-  uses
+
+uses
+    FMX.Dialogs,
     RESTRequest4D,
     uConstante,
+    LogUnit,
 
     Controllers.Auth,
     System.IOUtils,
@@ -38,21 +41,56 @@ var
  json : TJSONObject;
  representantes : TJSONArray;
  DmRepresentante : TDmRepresentante;
+ loop : boolean;
+ pagina : integer;
 begin
+  loop:= True;
+  pagina := 0;
 
-    DmRepresentante := TDmRepresentante.Create;
+  DmRepresentante := TDmRepresentante.create;
   try
-    json := TJSONObject.Create;
-    representantes := TJSONArray.Create;
+    while loop do
+    begin
+      Inc(pagina);
 
-    representantes :=  DmRepresentante.Listar_representante;
-    json.AddPair('representantes', representantes);
+      try
+       json := TJSONObject.Create;
+       representantes := TJSONArray.Create;
 
-    lRes := TRequest.New.BaseURL(URL)
-            .Resource('/v1/representante')
-            .ContentType('application/json')
-            .AddBody(json)
-            .Post;
+       representantes :=  DmRepresentante.Listar_representante(pagina);
+       json.AddPair('representantes', representantes);
+
+       if representantes.Size = 0 then
+       begin
+          log( 'Representantes syncronizados com sucesso ' + lRes.Content, 'RepresentantesSync');
+          loop := False;
+         if assigned(json) then
+            json.Free;
+            exit;
+       end;
+
+       lRes := TRequest.New.BaseURL(URL_AWS)
+              .Resource('/v1/representante/inserir')
+              .TokenBearer(TGetToken.SolicitaToken)
+              .ContentType('application/json')
+              .AddBody(json)
+              .Post;
+
+         if lRes.StatusCode <> 200 then
+         begin
+          Log('Erro ao enviar Representantes' + lres.Content, 'RepresententesSync');
+          loop := False;
+         end;
+
+      except on ex:exception do
+         begin
+           ShowMessage(lRes.Content);
+           Log('Erro ao enviar Representantes' + lres.Content, 'ErroRepresententesSync');
+           loop := False;
+         end
+      end;
+     end;
+
   finally
      DmRepresentante.Free;
   end;
@@ -64,21 +102,56 @@ var
  json : TJSONObject;
  representantes_x_cliente : TJSONArray;
  DmRepresentante : TDmRepresentante;
+ loop : boolean;
+ pagina : integer;
 begin
+  loop:= True;
+  pagina := 0;
 
     DmRepresentante := TDmRepresentante.Create;
   try
-    json := TJSONObject.Create;
-    representantes_x_cliente := TJSONArray.Create;
 
-    representantes_x_cliente :=  DmRepresentante.Listar_representante_x_cliente;
-    json.AddPair('representante_x_cliente', representantes_x_cliente);
+   while loop do
+   begin
+      Inc(pagina);
 
-    lRes := TRequest.New.BaseURL(URL)
-            .Resource('/v1/representante/rep_x_cliente')
-            .ContentType('application/json')
-            .AddBody(json)
-            .Post;
+      try
+        json := TJSONObject.Create;
+        representantes_x_cliente := TJSONArray.Create;
+
+        representantes_x_cliente :=  DmRepresentante.Listar_representante_x_cliente(pagina);
+        json.AddPair('representante_x_cliente', representantes_x_cliente);
+
+       if representantes_x_cliente.Size = 0 then
+       begin
+          log('RepresentanteX_Cliente syncronizados com sucesso ' + lRes.Content, 'LogRepresentante_X_clienteSync');
+          loop := False;
+         if assigned(json) then
+            json.Free;
+            exit;
+       end;
+
+        lRes := TRequest.New.BaseURL(URL_AWS)
+                .Resource('/v1/representante/rep_x_cliente')
+                .TokenBearer(TGetToken.SolicitaToken)
+                .ContentType('application/json')
+                .AddBody(json)
+                .Post;
+
+        if lRes.StatusCode <> 200 then
+         begin
+          Log('Erro ao enviar Representantes' + lres.Content, 'ErroRepresentente_X_ClienteSync');
+          loop := False;
+         end;
+
+      except on ex:exception do
+         begin
+           ShowMessage(lRes.Content);
+           Log('Erro ao enviar Representantes_X_Cliente' + lres.Content, 'ErroRepresentente_X_ClienteSync');
+           loop := False;
+         end
+      end;
+   end;
   finally
      DmRepresentante.Free;
   end;

@@ -4,11 +4,14 @@ interface
 
 uses
   RESTRequest4D,
+  UConstante,
+  LogUnit,
 
   Controllers.Auth,
-  UConstante,
 
   DateModule.Produto,
+
+  FMX.Dialogs,
 
   Horse.Request,
   Horse.Response,
@@ -40,25 +43,55 @@ var
  DmProduto : TDmProduto;
  Produtos : TJSONArray;
  json : TJSONObject;
+ loop : boolean;
+ pagina : integer;
 begin
+    pagina := 0;
+    loop := true;
 
     DmProduto := TDmProduto.Create;
+
     try
-       try
+      while loop do
+      begin
+        inc(pagina);
+         try
             json   := TJSONObject.Create;
             Produtos := TJSONArray.Create;
-            Produtos := DmProduto.ListarProdutos('01/01/1800 00:00:00', 1);
+            Produtos := DmProduto.ListarProdutos('01/01/1800 00:00:00', pagina);
+
+            if produtos.Size = 0 then
+            begin
+              log( 'Produtos syncronizados com sucesso ' + lResp.Content, 'ProdutoSync');
+              loop := False;
+               if assigned(Produtos) then
+                  Produtos.Free;
+              exit;
+            end;
 
             json.AddPair('produto', Produtos);
 
-         lResp := TRequest.New.BaseURL(URL)
-                   .Resource('/v1/produto')
-                   .ContentType('application/json')
-                   .AddBody(json)
-                   .Post;
-       except
+            lResp := TRequest.New.BaseURL(URL_AWS)
+                     .Resource('/v1/produto/inserir')
+                     .TokenBearer(TGetToken.SolicitaToken)
+                     .ContentType('application/json')
+                     .AddBody(json)
+                     .Post;
 
-       end;
+           if lResp.StatusCode <> 200 then
+           begin
+            Log('Erro ao enviar produtos' + lresp.Content, 'ErroProdutoSync');
+            loop := False;
+           end;
+
+         except on ex:exception do
+           begin
+            ShowMessage(lResp.Content);
+            Log('Erro ao enviar produtos' + lresp.Content, 'ErroProdutoSync');
+            loop := False;
+            end
+         end;
+      end;
     finally
       DmProduto.Free;
     end;
@@ -82,13 +115,22 @@ begin
 
             json.AddPair('estoque', Estoque);
 
-         lResp := TRequest.New.BaseURL(URL)
+         lResp := TRequest.New.BaseURL(URL_AWS)
                    .Resource('/v1/produto/estoque')
+                   .TokenBearer(TGetToken.SolicitaToken)
                    .ContentType('application/json')
                    .AddBody(json)
                    .Post;
-       except
 
+        if lResp.StatusCode = 200 then
+           Log('Estoque Enviado com sucesso ' + lresp.Content, 'EstoqueSync')
+        else
+          Log('Erro ao gravar estoque ' + lresp.Content, 'ErroEstoqueSync')      
+                   
+       except on ex:exception do
+         begin
+            Log('Erro ao enviar produtos' + lresp.Content, 'ErroProdutoSync');
+         end;
        end;
     finally
       DmProduto.Free;
