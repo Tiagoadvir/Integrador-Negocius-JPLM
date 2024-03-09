@@ -33,7 +33,7 @@ uses
   System.SysUtils,
   System.Types,
   System.UITypes,
-  System.Variants;
+  System.Variants, FMX.DateTimeCtrls;
 
 type
   TFrmPrincipal = class(TForm)
@@ -56,6 +56,8 @@ type
     Button12: TButton;
     Label4: TLabel;
     edt_secret_id: TEdit;
+    DateUltiSync: TDateEdit;
+    Label5: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);

@@ -58,20 +58,20 @@ begin
 
               obj   := TJSONObject.Create;
               clientes := TJSONArray.Create;
-              clientes := lDmCliente.ListarClientes('01/01/1800 00:00:00', pagina);
+              clientes := lDmCliente.ListarClientes(DateTimeToStr(FrmPrincipal.DateUltiSync.DateTime + Time), pagina);
 
               if clientes.Count = 0 then
               begin
-              log( 'Clientes syncronizados com sucesso ' + lResp.Content, 'LogClienteSync');
-              loop := False;
-               if assigned(obj) then
-                  obj.Free;
+                Log( 'Clientes syncronizados com sucesso ', 'LogClienteSync');
+                loop := False;
+                 if assigned(obj) then
+                    obj.Free;
               exit;
               end;
 
               obj.AddPair('clientes', clientes);
 
-              lResp := TRequest.New.BaseURL(URL_AWS)
+              lResp := TRequest.New.BaseURL(URL_CLIENTE)
                        .Resource('/v1/cliente/inserir')
                        .TokenBearer(TGetToken.SolicitaToken)
                        .ContentType('application/json')
@@ -93,6 +93,7 @@ begin
          end;
          end;
      end;
+          ShowMessage('Rotina executada com sucesso');
 end;
 
 end.

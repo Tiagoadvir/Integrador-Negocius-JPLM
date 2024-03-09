@@ -99,7 +99,7 @@ begin
                   end
          end;
       end;
-
+      ShowMessage('Rotina executada com sucesso');
    finally
      FreeAndNil(DmCondicaoPagamento);
    end;
@@ -160,6 +160,7 @@ begin
               end
      end;
     end;
+     ShowMessage('Rotina executada com sucesso');
   finally
      FreeAndNil(DmPrazo);
    end;
@@ -220,8 +221,9 @@ begin
              end
        end;
     end;
+         FreeAndNil(DmPrazo);
   finally
-     FreeAndNil(DmPrazo);
+     ShowMessage('Rotina executada com sucesso');
    end;
 end;
 
@@ -278,6 +280,7 @@ begin
                 end
        end;
     end;
+     ShowMessage('Rotina executada com sucesso');
   finally
      FreeAndNil(DmPrazo);
    end;

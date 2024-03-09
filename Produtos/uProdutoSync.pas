@@ -92,6 +92,7 @@ begin
             end
          end;
       end;
+     ShowMessage('Rotina executada com sucesso');
     finally
       DmProduto.Free;
     end;
@@ -132,6 +133,7 @@ begin
             Log('Erro ao enviar produtos' + lresp.Content, 'ErroProdutoSync');
          end;
        end;
+     ShowMessage('Rotina executada com sucesso');
     finally
       DmProduto.Free;
     end;

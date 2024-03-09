@@ -6,6 +6,7 @@ uses
   FMX.Dialogs,
   RESTRequest4D,
   uConstante,
+  LogUnit,
 
   Controllers.Auth,
   System.IOUtils,
@@ -44,19 +45,31 @@ var
 begin
 
   try
-    lDmPedido := TDmPedido.Create(nil);
 
-    obj   := TJSONObject.Create;
-    tipo := TJSONArray.Create;
-    tipo := DmPedido.ListarTipoPedido;
+      lDmPedido := TDmPedido.Create(nil);
 
-    obj.AddPair('tipo', tipo);
+      obj   := TJSONObject.Create;
+      tipo := TJSONArray.Create;
+      tipo := DmPedido.ListarTipoPedido;
 
-    lResp := TRequest.New.BaseURL(URL_AWS)
-             .Resource('/v1/pedido/tipo')
-             .TokenBearer(TGetToken.SolicitaToken)
-             .AddBody(obj)
-             .Post;
+      obj.AddPair('tipo', tipo);
+
+      lResp := TRequest.New.BaseURL(URL_AWS)
+               .Resource('/v1/pedido/importar/tipo')
+               .TokenBearer(TGetToken.SolicitaToken)
+               .AddBody(obj)
+               .Post;
+
+     if lResp.StatusCode <> 200 then
+     begin
+       raise exception.Create(lResp.Content) ;
+       Log('Erro ao enviar tipo de pedido : ' + lResp.Content, 'ErrTipoPedidoSync');
+     end
+     else
+     begin
+       Log('Tipo de pedido enviado com sucesso : ' + lResp.Content, 'TipoPedidoSync');
+       ShowMessage('Rotina executada com sucesso');
+     end;
   finally
      FreeAndNil(lDmPedido);
   end;
@@ -73,49 +86,52 @@ var
  I, J: Integer;
 begin
 
-          resp := TRequest.New.BaseURL(URL_AWS)
-                   .TokenBearer(TGetToken.SolicitaToken)
-                   .Resource('/v1/pedido/importar')  //resource é a  rota a ser consumida.
-                   .AddParam('dt_ultima_sincronizacao', dt_ult_sinc)
-                   .AddParam('pagina', pagina.ToString)
-                   .AddParam('ind_sinc', ind_sincronizar)
-                   .Accept('application/json') //Indica o formato de dados que será trabalhado
-                   .Get;    //Envio o tipo de requisião
+      resp := TRequest.New.BaseURL(URL_AWS)
+              .TokenBearer(TGetToken.SolicitaToken)
+              .Resource('/v1/pedido/exportar')  //resource é a  rota a ser consumida.
+              .AddParam('dt_ultima_sincronizacao', dt_ult_sinc)
+              .AddParam('pagina', pagina.ToString)
+              .AddParam('ind_sinc', ind_sincronizar)
+              .Accept('application/json') //Indica o formato de dados que será trabalhado
+              .Get;    //Envio o tipo de requisião
 
-          if resp.StatusCode <> 200 then
-             raise exception.Create(resp.Content)
-          else
-
-        pedido :=  TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(resp.Content), 0) as TJSONArray;
-
-        // Verificar se o pedido foi analisado corretamente
-
-
-        if Assigned(pedido) then
+        if resp.StatusCode <> 200 then
         begin
-          // Iterar sobre cada objeto JSON dentro do array de pedidos
-          for I := 0 to pedido.Size - 1 do
-            begin
-            pedidoAtual := pedido.Items[I] as TJSONObject;
-            pedidoAtualString := pedidoAtual.ToString;
-            DmPedido.InserirEditarPedido(
-                              pedidoAtual.GetValue<Integer>('cod_usuario'),
-                              pedidoAtual.GetValue<int64>('cod_pedido_local'),
-                              pedidoAtual.GetValue<Integer>('cod_cliente'),
-                              pedidoAtual.GetValue<Integer>('cod_prazo'),
-                              pedidoAtual.GetValue<Integer>('cod_forma_pagto'),
-                              0, // pedidoAtual.GetValue<Int64>('cod_pedido_oficial',0),
-                              pedidoAtual.GetValue<string>('tipo_pedido'),
-                              pedidoAtual.GetValue<string>('data_pedido'),
-                              pedidoAtual.GetValue<string>('contato'),
-                              pedidoAtual.GetValue<string>('observacao'),
-                              pedidoAtual.GetValue<string>('prazo_entrega'),
-                              pedidoAtual.GetValue<string>('data_entrega'),
-                              pedidoAtual.GetValue<string>('data_ultima_alteracao'),
-                              pedidoAtual.GetValue<Double>('valor_total'),
-                              pedidoAtual.GetValue<TJSONArray>('item')
-                              );
+             raise exception.Create(resp.Content) ;
+             Log('Erro ao enviar Cliente_x_forma_pagamento : ' + resp.Content, 'ErroImportacaoPedidoSync');
+        end
+        else
+        begin
+          pedido :=  TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(resp.Content), 0) as TJSONArray;
+         // Verificar se o pedido foi analisado corretamente
+          if Assigned(pedido) then
+          begin
+            // Iterar sobre cada objeto JSON dentro do array de pedidos
+            for I := 0 to pedido.Size - 1 do
+              begin
+              pedidoAtual := pedido.Items[I] as TJSONObject;
+              pedidoAtualString := pedidoAtual.ToString;
+              DmPedido.InserirEditarPedido(
+                                pedidoAtual.GetValue<Integer>('cod_usuario'),
+                                pedidoAtual.GetValue<int64>('cod_pedido_local'),
+                                pedidoAtual.GetValue<Integer>('cod_cliente'),
+                                pedidoAtual.GetValue<Integer>('cod_prazo'),
+                                pedidoAtual.GetValue<Integer>('cod_forma_pagto'),
+                                0, // pedidoAtual.GetValue<Int64>('cod_pedido_oficial',0),
+                                pedidoAtual.GetValue<string>('tipo_pedido'),
+                                pedidoAtual.GetValue<string>('data_pedido'),
+                                pedidoAtual.GetValue<string>('contato'),
+                                pedidoAtual.GetValue<string>('observacao'),
+                                pedidoAtual.GetValue<string>('prazo_entrega'),
+                                pedidoAtual.GetValue<string>('data_entrega'),
+                                pedidoAtual.GetValue<string>('data_ultima_alteracao'),
+                                pedidoAtual.GetValue<Double>('valor_total'),
+                                pedidoAtual.GetValue<TJSONArray>('item')
+                                );
+            end;
           end;
+         Log(' Importado pedido : ' + pedido.ToString, 'ImportarcaoPedidoSync');
+         ShowMessage('Rotina executada com sucesso');
         end;
 end;
 

@@ -4,6 +4,7 @@ unit DateModule.Cliente;
 interface
 
 uses
+  uFunctions,
   Uni,
   uMD5,
 
@@ -16,12 +17,18 @@ uses
   FireDAC.Comp.Client,
   FireDAC.Comp.DataSet,
   FireDAC.DApt,
+  FireDAC.DApt.Intf,
+  FireDAC.DatS,
+  FireDAC.Phys.Intf,
+  FireDAC.Stan.Async,
+  FireDAC.Stan.Error,
+  FireDAC.Stan.Intf,
   FireDAC.Stan.Option,
+  FireDAC.Stan.Param,
 
   System.Classes,
   System.JSON,
-  System.SysUtils, FireDAC.Stan.Intf, FireDAC.Stan.Param, FireDAC.Stan.Error,
-  FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async;
+  System.SysUtils;
 
 type
   TDmCliente = class(TDataModule)
@@ -82,47 +89,53 @@ begin
         lqryCliente.Active := False;
         lqryCliente.sql.Clear;
         lqryCliente.FetchOptions.Mode := fmAll;
-        lqryCliente.SQL.Add('SELECT FIRST :FIRST SKIP :SKIP * FROM (SELECT');
-        lqryCliente.SQL.Add('ISN_CLIENTE COD_CLIENTE,');
-        lqryCliente.SQL.Add('CLICN_CLIENTE COD_CLIENTE_LOCAL,');
-        lqryCliente.SQL.Add('CLINM_CLIENTE NOME_CLIENTE,');
-        lqryCliente.SQL.Add('CLINM_FANTASIA FANTASIA,');
+        lqryCliente.SQL.Add('SELECT FIRST :FIRST SKIP :SKIP * FROM (');
+        lqryCliente.SQL.Add('SELECT');
+        lqryCliente.SQL.Add('ISN_CLIENTE AS COD_CLIENTE,');
+        lqryCliente.SQL.Add('CLICN_CLIENTE AS COD_CLIENTE_LOCAL,');
+        lqryCliente.SQL.Add('CLINM_CLIENTE AS NOME_CLIENTE,');
+        lqryCliente.SQL.Add('CLINM_FANTASIA AS FANTASIA,');
         lqryCliente.SQL.Add('COALESCE(NULLIF(TRIM(CLINR_CGC), ''''), CLINR_CPF) AS CNPJ_CPF,');
-        lqryCliente.SQL.Add('CLINR_CGF INSCRICAO_ESTADUAL,');
-        lqryCliente.SQL.Add('CLINR_FONE_FATURAMENTO FONE,');
-        lqryCliente.SQL.Add('CLIDS_ENDERECO_FATURAMENTO ENDERECO,');
-        lqryCliente.SQL.Add('CLIDS_COMPLEMENTO_FAT,');
-        lqryCliente.SQL.Add('CLICN_NUMERO_END_FAT NUMERO,');
-        lqryCliente.SQL.Add('CLINM_BAIRRO BAIRRO,');
-        lqryCliente.SQL.Add('CLINM_CIDADE CIDADE,');
-        lqryCliente.SQL.Add('CLINR_CEP CEP,');
-        lqryCliente.SQL.Add('CLINM_UF UF,');
-        lqryCliente.SQL.Add('CLIDS_EMAIL EMAIL,');
-        lqryCliente.SQL.Add('CLIFG_INATIVO INATIVO,');
-        lqryCliente.SQL.Add('CLIFG_STATUS BLOQUEADO_FATURAMENTO,');
-        lqryCliente.SQL.Add('CLINR_PRECO NUMERO_TABELA_PRECO,');
-        lqryCliente.SQL.Add('CLIVL_LIMITE VALOR_LIMITE_CREDITO,');
-     //   lqryCliente.SQL.Add('TIPOCLI.ISN_FORMA_PAGAMENTO COD_FORMA_PAGAMENTO,');
-        lqryCliente.SQL.Add('CLI.ISN_PRAZO COD_FORMA_PAGAMENTO,');
-        lqryCliente.SQL.Add('PRA.PRADS_PRAZO PRAZO,');
-        lqryCliente.SQL.Add('CLI.CLIFG_NAO_EXPORTA_PALM NAO_EXPORTAR_PALM,');
-        lqryCliente.SQL.Add('CLI.ISN_PRAZO_MAX_TEMP COD_PRAZO_MAXIMO_TEMPORARIO,');
-        lqryCliente.SQL.Add('CLIDT_PRAZO_TEMP DATA_PRAZO_TEMPRARIO,');
-        lqryCliente.SQL.Add('CLINR_LATITUDE LATITUDE,');
-        lqryCliente.SQL.Add('CLINR_LONGITUDE LONGITUDE,');
+        lqryCliente.SQL.Add('CLINR_CGF AS INSCRICAO_ESTADUAL,');
+        lqryCliente.SQL.Add('CLINR_FONE_FATURAMENTO AS FONE,');
+        lqryCliente.SQL.Add('CLIDS_ENDERECO_FATURAMENTO AS ENDERECO,');
+        lqryCliente.SQL.Add('CLIDS_COMPLEMENTO_FAT AS COMPLEMENTO,');
+        lqryCliente.SQL.Add('CLICN_NUMERO_END_FAT AS NUMERO,');
+        lqryCliente.SQL.Add('CLINM_BAIRRO AS BAIRRO,');
+        lqryCliente.SQL.Add('CLINM_CIDADE AS CIDADE,');
+        lqryCliente.SQL.Add('CLINR_CEP AS CEP,');
+        lqryCliente.SQL.Add('CASE');
+        lqryCliente.SQL.Add('WHEN CLI.CLIFG_NAO_EXPORTA_PALM = ''S''');
+        lqryCliente.SQL.Add('  OR CLI.CLIFG_INATIVO = ''S'' ');
+        lqryCliente.SQL.Add('THEN ''N'' ELSE ''S''');
+        lqryCliente.SQL.Add('END AS IND_SINCRONIZAR,');
+        lqryCliente.SQL.Add('CLINM_UF AS UF,');
+        lqryCliente.SQL.Add('CLIDS_EMAIL AS EMAIL,');
+        lqryCliente.SQL.Add('CLIFG_STATUS AS BLOQUEADO_FATURAMENTO,');
+        lqryCliente.SQL.Add('CLINR_PRECO AS NUMERO_TABELA_PRECO,');
+        lqryCliente.SQL.Add('CLIVL_LIMITE AS VALOR_LIMITE_CREDITO,');
+        lqryCliente.SQL.Add('CLI.ISN_PRAZO AS COD_FORMA_PAGAMENTO,');
+        lqryCliente.SQL.Add('PRA.PRADS_PRAZO AS PRAZO,');
+        lqryCliente.SQL.Add('CLI.CLIFG_NAO_EXPORTA_PALM AS NAO_EXPORTAR_PALM,');
+        lqryCliente.SQL.Add('CLI.ISN_PRAZO_MAX_TEMP AS COD_PRAZO_MAXIMO_TEMPORARIO,');
+        lqryCliente.SQL.Add('CLIDT_PRAZO_TEMP AS DATA_PRAZO_TEMPRARIO,');
+        lqryCliente.SQL.Add('CLINR_LATITUDE AS LATITUDE,');
+        lqryCliente.SQL.Add('CLINR_LONGITUDE AS LONGITUDE,');
         lqryCliente.SQL.Add('CLI.DATA_ULTIMA_ALTERACAO');
-        lqryCliente.SQL.Add('from T_CLIENTE CLI');
-        lqryCliente.SQL.Add('join T_BAIRRO BAIRRO on (CLI.ISN_BAIRRO = BAIRRO.ISN_BAIRRO)');
-        lqryCliente.SQL.Add('join T_CIDADE CID on (CID.ISN_CIDADE = BAIRRO.ISN_CIDADE)');
-        lqryCliente.SQL.Add('join T_ESTADO UF on (UF.ISN_UF = CID.ISN_UF)');
-        lqryCliente.SQL.Add('join T_TIPO_CLIENTE TIPOCLI on (CLI.ISN_TIPO_CLIENTE = TIPOCLI.ISN_TIPO_CLIENTE)');
-        lqryCliente.SQL.Add('join T_TIPO_LOGRADOURO TPLOGR on (TPLOGR.ISN_TIPO_LOGRADOURO = CLI.ISN_TIPO_LOGRADOURO)');
-        lqryCliente.SQL.Add('left outer join T_PRAZO PRA on (PRA.ISN_PRAZO = CLI.ISN_PRAZO)');
-        lqryCliente.SQL.Add('WHERE CLI.CLIFG_NAO_EXPORTA_PALM = ''N''');
-        lqryCliente.SQL.Add('AND CLI.DATA_ULTIMA_ALTERACAO  > :DATA_ULTIMA_ALTERACAO');
-        lqryCliente.SQL.Add('ORDER BY ISN_CLIENTE)');
+        lqryCliente.SQL.Add('FROM T_CLIENTE CLI');
+        lqryCliente.SQL.Add('JOIN T_BAIRRO BAIRRO ON (CLI.ISN_BAIRRO = BAIRRO.ISN_BAIRRO)');
+        lqryCliente.SQL.Add('JOIN T_CIDADE CID ON (CID.ISN_CIDADE = BAIRRO.ISN_CIDADE)');
+        lqryCliente.SQL.Add('JOIN T_ESTADO UF ON (UF.ISN_UF = CID.ISN_UF)');
+        lqryCliente.SQL.Add('JOIN T_TIPO_CLIENTE TIPOCLI ON (CLI.ISN_TIPO_CLIENTE = TIPOCLI.ISN_TIPO_CLIENTE)');
+        lqryCliente.SQL.Add('JOIN T_TIPO_LOGRADOURO TPLOGR ON (TPLOGR.ISN_TIPO_LOGRADOURO = CLI.ISN_TIPO_LOGRADOURO)');
+        lqryCliente.SQL.Add('LEFT OUTER JOIN T_PRAZO PRA ON (PRA.ISN_PRAZO = CLI.ISN_PRAZO)');
+        lqryCliente.SQL.Add('WHERE CLI.CLIDT_ULTIMO_RECADASTRAMENTO > :DATA_ULTIMA_ALTERACAO   --DATA_ULTIMA_ALTERACAO > :DATA_ULTIMA_ALTERACAO');
+        lqryCliente.SQL.Add('ORDER BY ISN_CLIENTE');
+        lqryCliente.SQL.Add(')');
 
-        lqryCliente.ParamByName('DATA_ULTIMA_ALTERACAO').Value := dt_ultima_sincronizacao;
+
+
+        lqryCliente.ParamByName('DATA_ULTIMA_ALTERACAO').AsDateTime := ConverteData(dt_ultima_sincronizacao);
 
           //TRATAR A PAGINAÇÃO
         lqryCliente.ParamByName('FIRST').AsInteger := QTD_DE_REG_PAGINA_CLIENTE; //Quantos registro quero trazer
@@ -137,8 +150,8 @@ begin
         Result := lqryCliente.ToJSONArray;
 
     finally
-         lDmGlobal.Free;
-         lqryCliente.Free;
+       lDmGlobal.Free;
+       lqryCliente.Free;
     end;
 
     {$REGION 'CODIGO ANTERIOR COMENTADO'}
