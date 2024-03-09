@@ -133,8 +133,6 @@ begin
         lqryCliente.SQL.Add('ORDER BY ISN_CLIENTE');
         lqryCliente.SQL.Add(')');
 
-
-
         lqryCliente.ParamByName('DATA_ULTIMA_ALTERACAO').AsDateTime := ConverteData(dt_ultima_sincronizacao);
 
           //TRATAR A PAGINAÇÃO

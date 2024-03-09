@@ -1,0 +1,16 @@
+09/03/2024 15:06:24 - Erro ao gravar clientesErro na inserção de dadosValue 'inativo' not found
+09/03/2024 15:10:26 - Erro ao gravar clientesErro na inserção de dadosValue 'inativo' not found
+09/03/2024 15:15:53 - Erro ao gravar clientesErro na inserção de dadosMessages must be shown in the main UI thread.
+09/03/2024 15:18:29 -  Erro ao sincronizar Clientes 
+09/03/2024 15:21:03 - Erro ao gravar clientesErro na inserção de dadosMessages must be shown in the main UI thread.
+09/03/2024 15:21:44 -  Erro ao sincronizar Clientes 
+09/03/2024 15:23:07 - Erro ao gravar clientesErro na inserção de dadosMessages must be shown in the main UI thread.
+09/03/2024 15:28:47 - Erro ao gravar clientesErro na inserção de dadosMessages must be shown in the main UI thread.
+09/03/2024 15:31:25 -  Erro ao sincronizar Clientes 
+09/03/2024 15:40:56 -  Erro ao sincronizar Clientes 
+09/03/2024 15:41:34 -  Erro ao sincronizar Clientes 
+09/03/2024 15:45:47 -  Erro ao sincronizar Clientes 
+09/03/2024 15:46:25 -  Erro ao sincronizar Clientes 
+09/03/2024 15:48:03 -  Erro ao sincronizar Clientes 
+09/03/2024 15:48:23 - Erro ao gravar clientesErro na inserção de dadosMessages must be shown in the main UI thread.
+09/03/2024 15:49:26 - Erro ao gravar clientesErro na inserção de dadosMessages must be shown in the main UI thread.
