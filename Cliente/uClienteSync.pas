@@ -71,7 +71,7 @@ begin
 
               obj.AddPair('clientes', clientes);
 
-              lResp := TRequest.New.BaseURL(URL_CLIENTE)
+              lResp := TRequest.New.BaseURL(URL_AWS)
                        .Resource('/v1/cliente/inserir')
                        .TokenBearer(TGetToken.SolicitaToken)
                        .ContentType('application/json')
