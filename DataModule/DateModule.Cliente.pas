@@ -107,8 +107,8 @@ begin
         lqryCliente.SQL.Add('CASE');
         lqryCliente.SQL.Add('WHEN CLI.CLIFG_NAO_EXPORTA_PALM = ''S''');
         lqryCliente.SQL.Add('  OR CLI.CLIFG_INATIVO = ''S'' ');
-        lqryCliente.SQL.Add('THEN ''N'' ELSE ''S''');
-        lqryCliente.SQL.Add('END AS IND_SINCRONIZAR,');
+        lqryCliente.SQL.Add('THEN ''S'' ELSE ''N''');
+        lqryCliente.SQL.Add('END AS IND_EXCLUIR,');
         lqryCliente.SQL.Add('CLINM_UF AS UF,');
         lqryCliente.SQL.Add('CLIDS_EMAIL AS EMAIL,');
         lqryCliente.SQL.Add('CLIFG_STATUS AS BLOQUEADO_FATURAMENTO,');

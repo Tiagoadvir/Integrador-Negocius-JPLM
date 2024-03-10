@@ -1,11 +1,5 @@
-09/03/2024 15:03:18 - Clientes syncronizados com sucesso 
-09/03/2024 15:03:53 - Clientes syncronizados com sucesso 
-09/03/2024 15:04:24 - Clientes syncronizados com sucesso 
-09/03/2024 15:05:52 - Clientes syncronizados com sucesso 
-09/03/2024 15:17:06 - Clientes syncronizados com sucesso 
-09/03/2024 15:17:48 - Clientes syncronizados com sucesso 
-09/03/2024 15:51:10 - Clientes syncronizados com sucesso 
-09/03/2024 15:51:18 - Clientes syncronizados com sucesso 
-09/03/2024 15:51:58 - Clientes syncronizados com sucesso 
-09/03/2024 16:24:13 - Clientes syncronizados com sucesso 
-09/03/2024 16:25:48 - Clientes syncronizados com sucesso 
+10/03/2024 16:13:14 - Clientes syncronizados com sucesso 
+10/03/2024 16:15:53 - Clientes syncronizados com sucesso 
+10/03/2024 16:16:32 - Clientes syncronizados com sucesso 
+10/03/2024 16:17:25 - Clientes syncronizados com sucesso 
+10/03/2024 16:17:55 - Clientes syncronizados com sucesso 

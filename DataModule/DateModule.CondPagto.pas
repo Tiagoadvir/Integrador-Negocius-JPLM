@@ -51,7 +51,7 @@ interface
     function ListarPrazo(pagina : integer) : TJSONArray;
     function ListarFormaPagto(pagina : integer): TJSONArray;
     function ListarClienteFormaPagto(dt_ultima_sincronizacao : String;
-                                              cod_usuario: Integer) : TJSONArray;
+                                              pagina: Integer) : TJSONArray;
     function Listar_prazo_x_pedido(dt_ultima_alteracao: string; pagina : Integer): TJSONArray;
     public
   end;
@@ -146,23 +146,23 @@ begin
           Fazo select na tabela, e lista as condições de pagamento
           }
           Active := False;
-          sql.Clear;
-          SQL.Add('SELECT  FIRST :FIRST SKIP :SKIP * FROM ( SELECT ');
+          SQL.Clear;
+          SQL.Add('SELECT  FIRST :FIRST SKIP :SKIP * FROM ( SELECT');
           SQL.Add('ISN_PRAZO AS COD_PRAZO,');
           SQL.Add('PRADS_PRAZO AS DESCRICAO_PRAZO,');
           SQL.Add('PRAVL_PEDIDO_MINIMO AS VALOR_PED_MINIMO,');
+          SQL.Add('CASE');
+          SQL.Add('WHEN  PRAFG_INATIVO = ''S'' OR  PRAFG_EXP_PALM = ''N''');
+          SQL.Add('THEN ''S'' ELSE  ''N''');
+          SQL.Add('END AS IND_EXCLUIR,');
           SQL.Add('PRAFG_EXP_PALM AS EXPORTA_PALM,');
           SQL.Add('PRANR_PARCELA AS QTD_PARCELA,');
           SQL.Add('PRAQT_INTERVALO AS INTERVALO_ENTRE_PARCELA,');
           SQL.Add('PRAQT_DIAS_ENTRADA AS DIAS_ENTRADA');
-          SQL.Add('FROM');
-          SQL.Add('T_PRAZO');
-          SQL.Add('WHERE');
-          SQL.Add('PRAFG_EXP_PALM = ''S''');
-          SQL.Add('ORDER BY');
-          SQL.Add('ISN_PRAZO)');
+          SQL.Add('FROM  T_PRAZO');
+          SQL.Add('ORDER BY ISN_PRAZO)');
 
-                     //TRATAR A PAGINAÇÃO
+          //TRATAR A PAGINAÇÃO
           ParamByName('FIRST').Value := QTD_DE_REG_PAGINA_PRODUTO; //Quantos registro quero trazer
           ParamByName('SKIP').Value := (pagina * QTD_DE_REG_PAGINA_PRODUTO) - QTD_DE_REG_PAGINA_PRODUTO;
 
@@ -196,10 +196,15 @@ begin
      }
          qryforma.Active := False;
          qryforma.sql.Clear;
-         qryforma.SQL.Add(' SELECT FIRST :FIRST SKIP :SKIP * FROM ( ');
-         qryforma.SQL.Add('SELECT ISN_FORMA_PAGAMENTO ID_FORMA, FPADS_FORMA DESCRICAO_FORMA');
-         qryforma.SQL.Add('FROM T_FORMA_PAGAMENTO ');
-         qryforma.SQL.Add('WHERE FPAFG_EXP_PALM = ''S'')');
+         qryforma.SQL.Add('SELECT FIRST :FIRST SKIP :SKIP * FROM (');
+         qryforma.SQL.Add('SELECT');
+         qryforma.SQL.Add('ISN_FORMA_PAGAMENTO ID_FORMA,');
+         qryforma.SQL.Add('FPADS_FORMA DESCRICAO_FORMA,');
+         qryforma.SQL.Add('CASE WHEN  FPAFG_EXP_PALM = ''N''');
+         qryforma.SQL.Add('THEN ''S'' ELSE ''N''');
+         qryforma.SQL.Add('END AS IND_EXCLUIR');
+         qryforma.SQL.Add('FROM T_FORMA_PAGAMENTO');
+         qryforma.SQL.Add(')');
 
          qryforma.ParamByName('FIRST').AsInteger := QTD_DE_REG_PAGINA_CLIENTE; //Quantos registro quero trazer
          qryforma.ParamByName('SKIP').AsInteger := (pagina * QTD_DE_REG_PAGINA_CLIENTE) - QTD_DE_REG_PAGINA_CLIENTE;
@@ -219,7 +224,7 @@ end;
 
 //Lista As condições de pagamento
 function TDmCondPagto.ListarClienteFormaPagto(dt_ultima_sincronizacao : String;
-                                              cod_usuario: Integer) : TJSONArray;
+                                              pagina: Integer) : TJSONArray;
  var
  qryforma : TFDQuery; // se fosse utilizar sem compnente em tempo de execução
   DmGlobal : TDmGlobal;
@@ -231,28 +236,26 @@ begin
 
     try
 
-        with qryforma do
-        begin
           {
           Fazo select na tabela, e lista as condições de pagamento
           }
-           Active := False;
-            SQL.Add('SELECT DISTINCT CFPA.ISN_FORMA_PAGAMENTO ID_FORMA, CFPA.ISN_CLI_FORMA_PAGAMENTO ID_CLIENTE_FORMA_PAGTO, CFPA.ISN_CLIENTE ID_CLIENTE,');
-            SQL.Add('CLI.CLICN_CLIENTE COD_CLIENTE_OFICIAL, CFPA.DATA_ULTIMA_ALTERACAO');
-            SQL.Add('FROM T_REPRESENTANTE_X_CLIENTE REP ');
-            SQL.Add('JOIN T_CLIENTE CLI ON (CLI.ISN_CLIENTE = REP.ISN_CLIENTE) ');
-            SQL.Add('JOIN T_CLIENTE_X_FORMA_PAGAMENTO CFPA ON (CFPA.ISN_CLIENTE = CLI.ISN_CLIENTE)');
-            SQL.Add('JOIN T_REPRESENTANTE REP1 ON (REP1.ISN_REPRESENTANTE = REP.ISN_REPRESENTANTE)');
-            // SQL.Add('WHERE CLI.CLIFG_INATIVO = ''N'' ');
-            SQL.Add('WHERE CLI.DATA_ULTIMA_ALTERACAO > :DATA_ULTIMA_ALTERACAO');
-            SQL.Add('AND REP1.REPCN_REPRESENTANTE = :REPCN_REPRESENTANTE');  //COLOCAR O CÓDIGO DO REPRESENTANTE
+           qryforma.SQL.Add('SELECT FIRST :FIRST SKIP :SKIP * FROM ( ');
+           qryforma.SQL.Add('    SELECT DISTINCT CFPA.ISN_FORMA_PAGAMENTO AS ID_FORMA, ');
+           qryforma.SQL.Add('           CFPA.ISN_CLI_FORMA_PAGAMENTO AS ID_CLIENTE_FORMA_PAGTO, ');
+           qryforma.SQL.Add('           CFPA.ISN_CLIENTE AS ID_CLIENTE,');
+           qryforma.SQL.Add('           CLI.CLICN_CLIENTE AS COD_CLIENTE_OFICIAL, ');
+           qryforma.SQL.Add('           CFPA.DATA_ULTIMA_ALTERACAO');
+           qryforma.SQL.Add('    FROM T_REPRESENTANTE_X_CLIENTE REP ');
+           qryforma.SQL.Add('    JOIN T_CLIENTE CLI ON CLI.ISN_CLIENTE = REP.ISN_CLIENTE');
+           qryforma.SQL.Add('    JOIN T_CLIENTE_X_FORMA_PAGAMENTO CFPA ON CFPA.ISN_CLIENTE = CLI.ISN_CLIENTE');
+           qryforma.SQL.Add('    JOIN T_REPRESENTANTE REP1 ON REP1.ISN_REPRESENTANTE = REP.ISN_REPRESENTANTE');
+           qryforma.SQL.Add('    WHERE CLI.DATA_ULTIMA_ALTERACAO > :DATA_ULTIMA_ALTERACAO');
+           qryforma.SQL.Add(')');
 
-
-            ParamByName('DATA_ULTIMA_ALTERACAO').Value := dt_ultima_sincronizacao;
-            ParamByName('REPCN_REPRESENTANTE').Value := cod_usuario;
-
-            Active := True;
-        end;
+           qryforma.ParamByName('DATA_ULTIMA_ALTERACAO').Value := dt_ultima_sincronizacao;
+           qryforma.ParamByName('FIRST').AsInteger := QTD_DE_REG_PAGINA_CLIENTE; //Quantos registro quero trazer
+           qryforma.ParamByName('SKIP').AsInteger := (pagina * QTD_DE_REG_PAGINA_CLIENTE) - QTD_DE_REG_PAGINA_CLIENTE;
+           qryforma.Active := True;
 
         // Após, Monta um  array objeto json com o resultado da query
            Result := qryforma.ToJSONArray;
@@ -323,13 +326,16 @@ begin
      qryforma.SQL.Add('SELECT');
      qryforma.SQL.Add('TPP.ISN_TIPO_PEDIDO_PRAZO COD_PRAZO_X_PEDIDO,');
      qryforma.SQL.Add('TPP.ISN_TIPO_PEDIDO COD_TIPO_PEDIDO,');
-     qryforma.SQL.Add('TPP.ISN_PRAZO COD_PRAZO');
+     qryforma.SQL.Add('TPP.ISN_PRAZO COD_PRAZO,');
+     qryforma.SQL.Add('CASE WHEN TPP.IND_SINC = ''N''');
+     qryforma.SQL.Add('THEN ''S'' ELSE ''N''');
+     qryforma.SQL.Add('END AS IND_EXCLUIR');
      qryforma.SQL.Add('FROM T_TIPO_PEDIDO_PRAZO TPP');
      qryforma.SQL.Add('JOIN T_TIPO_PEDIDO TP ON (TP.ISN_TIPO_PEDIDO = TPP.ISN_TIPO_PEDIDO)');
      qryforma.SQL.Add('JOIN T_PRAZO TPZ ON (TPZ.ISN_PRAZO = TPP.ISN_PRAZO)');
      qryforma.SQL.Add('WHERE TP.TIPFG_EXPORTA_PALM = ''S''');
      qryforma.SQL.Add('AND TPZ.PRAFG_EXP_PALM = ''S''');
-     qryforma.SQL.Add('AND TPZ.PRAFG_INATIVO = ''N'' ');
+     qryforma.SQL.Add('AND TPZ.PRAFG_INATIVO = ''N''');
      qryforma.SQL.Add('AND TPP.DATA_ULTIMA_ALTERACAO > :DATA_ULTIMA_ALTERACAO)');
 
      qryforma.ParamByName('DATA_ULTIMA_ALTERACAO').Value := dt_ultima_alteracao;

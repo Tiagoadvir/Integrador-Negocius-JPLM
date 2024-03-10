@@ -187,7 +187,7 @@ begin
       try
         obj   := TJSONObject.Create;
         cliente_x_forma_pagto := TJSONArray.Create;
-        cliente_x_forma_pagto := DmPrazo.ListarClienteFormaPagto('01/01/1900', pagina);
+        cliente_x_forma_pagto := DmPrazo.ListarClienteFormaPagto(DateTimeToStr(FrmPrincipal.DateUltiSync.DateTime + Time), pagina);
 
         obj.AddPair('cliente_forma_pagto', cliente_x_forma_pagto);
 
@@ -247,7 +247,7 @@ begin
       try
         obj   := TJSONObject.Create;
         forma_pagto_x_pedido := TJSONArray.Create;
-        forma_pagto_x_pedido := DmPrazo.Listar_prazo_x_pedido('01/01/1900', pagina);
+        forma_pagto_x_pedido := DmPrazo.Listar_prazo_x_pedido(DateTimeToStr(FrmPrincipal.DateUltiSync.DateTime + Time), pagina);
 
         if forma_pagto_x_pedido.Size = 0 then
         begin
