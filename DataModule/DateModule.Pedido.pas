@@ -101,12 +101,12 @@ type
        property ExecuteOnPass: TExecuteOnPass read FExecuteOnPass write FExecuteOnPass;
 
        function InserirEditarPedido(cod_usuario: Integer; cod_pedido_local: Int64; cod_cliente ,
-                                               cod_cond_pagto, forma_pagamento, cod_pedido_oficial: Integer;
-                                               tipo_pedido, data_pedido, contato, obs,
-                                               prazo_entrega, data_entrega  : string;
-                                               dt_ult_sincronizacao : string;
-                                               valor_total : Double;
-                                               Itens: TJSONArray ) : TJSonObject;
+                                        cod_cond_pagto, forma_pagamento : integer; out cod_pedido_oficial: int64;
+                                        tipo_pedido, data_pedido, contato, obs,
+                                        prazo_entrega, data_entrega  : string;
+                                        dt_ult_sincronizacao : string;
+                                        valor_total : Double;
+                                        itens: TJSONArray ) : TJSonObject;
        function ListarTipoPedido: TJsonArray;
        function ListarPedidos(dt_ultima_sincronizacao: String; cod_usuario,
                               pagina: Integer): TJSONArray;
@@ -123,12 +123,12 @@ implementation
 {$R *.dfm}
 //Insere ou edita o pedido
 function TDmPedido.InserirEditarPedido (cod_usuario: Integer; cod_pedido_local: Int64; cod_cliente ,
-                                             cod_cond_pagto, forma_pagamento, cod_pedido_oficial: Integer;
-                                             tipo_pedido, data_pedido, contato, obs,
-                                             prazo_entrega, data_entrega  : string;
-                                             dt_ult_sincronizacao : string;
-                                             valor_total : Double;
-                                             itens: TJSONArray ) : TJSonObject;
+                                        cod_cond_pagto, forma_pagamento : integer; out cod_pedido_oficial: int64;
+                                        tipo_pedido, data_pedido, contato, obs,
+                                        prazo_entrega, data_entrega  : string;
+                                        dt_ult_sincronizacao : string;
+                                        valor_total : Double;
+                                        itens: TJSONArray ) : TJSonObject;
  var
  qry : TFDQuery; // se fosse utilizar sem compnente em tempo de execução
  cod_ped_local : integer;
@@ -238,6 +238,7 @@ begin
 
       Result := qry.ToJSONObject;
       cod_ped_local := qry.FieldByName('PEDCN_PEDIDO').AsInteger;
+      cod_pedido_oficial := cod_ped_local;
 
     finally
          FreeAndNil(qry);
@@ -344,7 +345,7 @@ begin
                 qry.ParamByName('IPEQT_QUANTIDADE_PALM').Value  :=  Itens[i].GetValue<Double>('quantidade', 0);
 
                 if (desconto > 0) and (Itens[i].GetValue<Double>('prec_digitado') = 0) then
-                 qry.ParamByName('IPEVL_PRE_DIG').Value  := Itens[i].GetValue<Double>('valor_unitario', 0) * (1 - desconto / 100)
+                 qry.ParamByName('IPEVL_PRE_DIG').Value  := Itens[i].GetValue<Double>('valor_unitario', 0) * (1 - (desconto / 100))
                 else
                 begin
                  qry.ParamByName('IPEVL_PRE_DIG').Value  :=  Itens[i].GetValue<Double>('prec_digitado', 0);

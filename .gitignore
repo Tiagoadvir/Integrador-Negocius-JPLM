@@ -1,10 +1,6 @@
 # Arquivos temporários criados pelo Delphi
-Android/Debug/libFastPed2.so
-Android/Debug/FastPed2/debug/libFastPed2.so
-Android/*
-Android*
-*Android/*
-*Android*
+Android/**
+Win32/**
 git reset HEAD Android/Debug/*
 Win32
 __history/

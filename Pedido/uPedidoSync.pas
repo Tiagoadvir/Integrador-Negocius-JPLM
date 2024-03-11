@@ -23,6 +23,7 @@ uses
 type
 TPedidoSync = class
   private
+    procedure EnviaCodPedidoOficial(cod_ped_local, CodPedidoOficial : int64);
   public
   procedure ListarTipoPedido;
   function ListarPedidosWeb(dt_ult_sinc, ind_sincronizar: string; Pagina: Integer): TJSONArray;
@@ -83,10 +84,11 @@ var
  itens  : TJSONArray;
  pedidoAtual: TJSONObject;
  pedidoAtualString: string;
+ cod_pedido_oficial : Int64;
  I, J: Integer;
 begin
 
-      resp := TRequest.New.BaseURL(URL_AWS)
+      resp := TRequest.New.BaseURL(URL_PEDIDO)
               .TokenBearer(TGetToken.SolicitaToken)
               .Resource('/v1/pedido/exportar')  //resource é a  rota a ser consumida.
               .AddParam('dt_ultima_sincronizacao', dt_ult_sinc)
@@ -108,7 +110,7 @@ begin
           begin
             // Iterar sobre cada objeto JSON dentro do array de pedidos
             for I := 0 to pedido.Size - 1 do
-              begin
+            begin
               pedidoAtual := pedido.Items[I] as TJSONObject;
               pedidoAtualString := pedidoAtual.ToString;
               DmPedido.InserirEditarPedido(
@@ -117,7 +119,7 @@ begin
                                 pedidoAtual.GetValue<Integer>('cod_cliente'),
                                 pedidoAtual.GetValue<Integer>('cod_prazo'),
                                 pedidoAtual.GetValue<Integer>('cod_forma_pagto'),
-                                0, // pedidoAtual.GetValue<Int64>('cod_pedido_oficial',0),
+                                cod_pedido_oficial, // pedidoAtual.GetValue<Int64>('cod_pedido_oficial',0),
                                 pedidoAtual.GetValue<string>('tipo_pedido'),
                                 pedidoAtual.GetValue<string>('data_pedido'),
                                 pedidoAtual.GetValue<string>('contato'),
@@ -128,11 +130,32 @@ begin
                                 pedidoAtual.GetValue<Double>('valor_total'),
                                 pedidoAtual.GetValue<TJSONArray>('item')
                                 );
+
+                EnviaCodPedidoOficial(pedidoAtual.GetValue<int64>('cod_pedido_local'), cod_pedido_oficial )
             end;
           end;
          Log(' Importado pedido : ' + pedido.ToString, 'ImportarcaoPedidoSync');
          ShowMessage('Rotina executada com sucesso');
         end;
+end;
+
+procedure TPedidoSync.EnviaCodPedidoOficial(cod_ped_local, CodPedidoOficial: Int64);
+var
+  lResp: IResponse;
+  Obj: TJSONObject;
+begin
+  // Crie um objeto JSON para conter os dados a serem enviados
+  Obj := TJSONObject.Create;
+  Obj.AddPair('cod_pedido_oficial', CodPedidoOficial); // Adicione o código do pedido oficial ao objeto JSON
+  Obj.AddPair('cod_pedido_local',  cod_ped_local);
+
+  // Envie a solicitação PATCH com os parâmetros adequados
+  lResp := TRequest.New.BaseURL(URL_PEDIDO)
+            .Resource('/v1/pedido/retorno-codigo-oficial/inserir')
+            .ContentType('application/json')
+            .AddBody(Obj) // Adicione o objeto JSON como o corpo da solicitação
+            .TokenBearer(TGetToken.SolicitaToken)
+            .Post;
 end;
 
 end.
