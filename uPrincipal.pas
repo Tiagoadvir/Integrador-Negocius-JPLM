@@ -48,9 +48,6 @@ type
     Button8: TButton;
     Label2: TLabel;
     edt_cliente_ID: TEdit;
-    Edit2: TEdit;
-    Button9: TButton;
-    Label3: TLabel;
     Button10: TButton;
     Button11: TButton;
     Button12: TButton;
@@ -154,7 +151,7 @@ end;
 
 procedure TFrmPrincipal.Button9Click(Sender: TObject);
 begin
-   THorse.Listen(strtoint(Edit2.Text));
+ //  THorse.Listen(strtoint(Edit2.Text));
 end;
 
 procedure TFrmPrincipal.InstanciaClassesSync;

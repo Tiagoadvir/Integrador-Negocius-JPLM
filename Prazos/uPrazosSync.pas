@@ -251,7 +251,7 @@ begin
 
         if forma_pagto_x_pedido.Size = 0 then
         begin
-           log( 'forma_pagamento_x_pedidos syncronizados com sucesso ' + lResp.Content, 'formaPagtoPorPedidoSync');
+           log( 'forma_pagamento_x_pedidos syncronizados com sucesso ', 'formaPagtoPorPedidoSync');
            loop := False;
            if assigned(forma_pagto_x_pedido) then
             forma_pagto_x_pedido.Free;
