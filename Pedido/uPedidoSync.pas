@@ -88,7 +88,7 @@ var
  I, J: Integer;
 begin
 
-      resp := TRequest.New.BaseURL(URL_AWS)
+      resp := TRequest.New.BaseURL(URL_PEDIDO)
               .TokenBearer(TGetToken.SolicitaToken)
               .Resource('/v1/pedido/exportar')  //resource é a  rota a ser consumida.
               .AddParam('dt_ultima_sincronizacao', dt_ult_sinc)
@@ -150,7 +150,7 @@ begin
   Obj.AddPair('cod_pedido_local',  cod_ped_local);
 
   // Envie a solicitação PATCH com os parâmetros adequados
-  lResp := TRequest.New.BaseURL(URL_AWS)
+  lResp := TRequest.New.BaseURL(URL_PEDIDO)
             .Resource('/v1/pedido/retorno-codigo-oficial/inserir')
             .ContentType('application/json')
             .AddBody(Obj) // Adicione o objeto JSON como o corpo da solicitação

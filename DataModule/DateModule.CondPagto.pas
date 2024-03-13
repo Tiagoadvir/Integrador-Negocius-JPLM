@@ -152,6 +152,10 @@ begin
           SQL.Add('PRADS_PRAZO AS DESCRICAO_PRAZO,');
           SQL.Add('PRAVL_PEDIDO_MINIMO AS VALOR_PED_MINIMO,');
           SQL.Add('CASE');
+          SQL.Add('WHEN PRAPR_DESCONTO IS NULL');
+          SQL.Add('THEN 0 ELSE PRAPR_DESCONTO');
+          SQL.Add('END AS DESCONTO,');
+          SQL.Add('CASE');
           SQL.Add('WHEN  PRAFG_INATIVO = ''S'' OR  PRAFG_EXP_PALM = ''N''');
           SQL.Add('THEN ''S'' ELSE  ''N''');
           SQL.Add('END AS IND_EXCLUIR,');
