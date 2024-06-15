@@ -7,3 +7,5 @@
 11/03/2024 10:23:06 - Clientes syncronizados com sucesso 
 12/03/2024 10:27:39 - Clientes syncronizados com sucesso 
 12/03/2024 10:28:23 - Clientes syncronizados com sucesso 
+14/03/2024 20:55:27 - Clientes syncronizados com sucesso 
+14/06/2024 20:24:04 - Clientes syncronizados com sucesso 

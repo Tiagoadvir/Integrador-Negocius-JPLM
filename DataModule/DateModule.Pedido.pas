@@ -219,8 +219,7 @@ begin
          qry.ParamByName('PEDVL_TOTAL').Value := valor_total;      //valor total pedido
        end;
 
-       qry.ParamByName('PEDVL_TAXA_CLIENTE').clear;
-
+        qry.ParamByName('PEDVL_TAXA_CLIENTE').clear;
 
          qry.Active := True;
          DmGlobal.Conn.Commit;
@@ -425,7 +424,7 @@ begin
            qry.SQL.Add('SELECT');
            qry.SQL.Add('ISN_TIPO_PEDIDO COD_TIPO,');
            qry.SQL.Add('TIPDS_TIPO DESCRICAO,');
-           qry.SQL.Add('IND_SINC');
+           qry.SQL.Add('TIPFG_EXPORTA_PALM AS IND_SINC');
            qry.SQL.Add('FROM T_TIPO_PEDIDO');
            qry.SQL.Add('WHERE TIPFG_EXPORTA_PALM = ''S''');
            qry.Active := True;

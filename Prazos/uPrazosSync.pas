@@ -146,21 +146,23 @@ begin
                .AddBody(obj)
                .Post;
 
-      if lResp.StatusCode <> 200 then
-      begin
-       Log('Erro ao enviar produtos' + lresp.Content, 'ErroPrazoSync');
-       loop := False;
-       end;
+        if lResp.StatusCode <> 200 then
+        begin
+          Log('Erro ao enviar produtos' + lresp.Content, 'ErroPrazoSync');
+          loop := False;
+        end;
 
-    except on ex:exception do
-             begin
-              ShowMessage(lResp.Content);
-              Log('Erro ao enviar Prazos' + lresp.Content, 'ErroPrazoSync');
-              loop := False;
-              end
+        ShowMessage('Rotina executada com sucesso');
+
+     except on ex:exception do
+       begin
+        ShowMessage(lResp.Content);
+        Log('Erro ao enviar Prazos' + lresp.Content, 'ErroPrazoSync');
+        loop := False;
+        end;
      end;
     end;
-     ShowMessage('Rotina executada com sucesso');
+
   finally
      FreeAndNil(DmPrazo);
    end;
