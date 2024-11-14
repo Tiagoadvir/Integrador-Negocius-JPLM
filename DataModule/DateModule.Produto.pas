@@ -4,15 +4,21 @@ interface
 
 uses
   uFunctions,
+
   Data.DB,
 
   DataSet.Serialize,
   DataSet.Serialize.Config,
 
+  DateModule.Global,
+
   FMX.Graphics,
 
   FireDAC.Comp.Client,
+  FireDAC.Comp.DataSet,
   FireDAC.DApt,
+  FireDAC.DApt.Intf,
+  FireDAC.DatS,
   FireDAC.FMXUI.Wait,
   FireDAC.Phys,
   FireDAC.Phys.FB,
@@ -24,6 +30,7 @@ uses
   FireDAC.Stan.Error,
   FireDAC.Stan.Intf,
   FireDAC.Stan.Option,
+  FireDAC.Stan.Param,
   FireDAC.Stan.Pool,
   FireDAC.UI.Intf,
   FireDAC.VCLUI.Wait,
@@ -33,16 +40,19 @@ uses
   System.SysUtils,
   System.Variants,
 
-  system.IniFiles, DateModule.Global, FireDAC.Stan.Param, FireDAC.DatS,
-  FireDAC.DApt.Intf, FireDAC.Comp.DataSet;
+  system.IniFiles;
 
 type
   TDmProduto = class(TDataModule)
     qryProduto: TFDQuery;
+    EventAlerter: TFDEventAlerter;
+    procedure EventAlerterAlert(ASender: TFDCustomEventAlerter; const AEventName: string; const AArgument: Variant);
+    procedure DataModuleCreate(Sender: TObject);
   private
     Conn : TFDConnection;
     Conexao : TDmGlobal;
     procedure ConfiguraParametrosDatasetSerialize;
+    function EnviaAtualizacaoEstoque(Const aNomeEvento : string ; out aEstoque : TJSONArray) : Boolean;
 
     { Private declarations }
   public
@@ -60,7 +70,11 @@ var
 implementation
 
 uses
-  uMD5;
+  RESTRequest4D,
+  uConstante,
+  uMD5,
+
+  FMX.Dialogs;
 
 {%CLASSGROUP 'FMX.Controls.TControl'}
 
@@ -71,6 +85,12 @@ begin
    Conexao   := TDmGlobal.Create(nil);
    qryProduto := TFDQuery.Create(nil);
    qryProduto.Connection :=  Conexao.conn;
+end;
+
+procedure TDmProduto.DataModuleCreate(Sender: TObject);
+begin
+   EventAlerter.Connection := DmGlobal.Conn;
+   EventAlerter.Active := true;
 end;
 
 destructor TDmProduto.destroy;
@@ -187,4 +207,61 @@ begin
            Result := qryProduto.ToJSONArray;
 end;
 
+procedure TDmProduto.EventAlerterAlert(ASender: TFDCustomEventAlerter; const AEventName: string; const AArgument: Variant);
+var
+  lresp : Iresponse;
+  Estoque : TJSONArray;
+  json : TJSONObject;
+begin
+
+
+   // Verificar se o evento é 'estoque_fiscal_disponivel_alterado'
+  if AEventName.StartsWith('estoque_fiscal_disponivel_alterado') then
+  begin
+
+     if   EnviaAtualizacaoEstoque(AEventName, Estoque) then
+     begin
+       json := TJSONObject.Create;
+       json.AddPair('estoque_atual', Estoque);
+     end;
+
+   lresp := TRequest.New.BaseURL(URL_AWS)
+            .Resource('/v1/produto/estoque/atualiza')
+            .TokenBearer(TGetToken.SolicitaToken)
+            .ContentType('application/json')
+            .AddBody(json)
+            .Post;
+  end;
+
+end;
+
+function TDmProduto.EnviaAtualizacaoEstoque(Const aNomeEvento : string ; out aEstoque : TJSONArray) : Boolean;
+begin
+
+  qryProduto.Active := false;
+  qryProduto.SQL.Clear;
+  qryProduto.SQL.Add('select PRODUTOID, RESERVAFISCAL from LOGEVENTOS where EVENTONOME = :EVENTONOME');
+  qryProduto.ParamByName('EVENTONOME').AsString := aNomeEvento;
+  qryProduto.Active := True;
+
+  aEstoque := qryProduto.ToJSONArray() ;
+
+  Result := qryProduto.RecordCount > 0;
+
+   // Realiza o DELETE após a leitura dos dados
+   for var I := 0 to aEstoque.Size - 1 do
+   begin
+     var  JSONObj := TJSONObject.Create;
+
+      JSONObj := aEstoque.Items[I] as TJSONObject;
+
+    qryProduto.Active := false;
+    qryProduto.SQL.Clear;
+    qryProduto.SQL.Add('DELETE FROM LOGEVENTOS where EVENTONOME = :EVENTONOME AND PRODUTOID = :PRODUTOID');
+    qryProduto.ParamByName('EVENTONOME').AsString := aNomeEvento;
+    qryProduto.ParamByName('PRODUTOID').AsInteger := JSONObj.GetValue<Integer>('produtoid');
+    qryProduto.ExecSQL;
+   end;
+
+end;
 end.
